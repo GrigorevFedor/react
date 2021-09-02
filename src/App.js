@@ -6,9 +6,11 @@ import { useState, useEffect } from 'react';
 function App() {
   const [messageList, setMessageList] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-
+  const BOT = 'bot';
+  const HUMAN = 'human';
   const addMessageHandle = (e) => {
-    setMessageList(messages => [...messages, { text: newMessage, author: 'human' }])
+    e.preventDefault();
+    setMessageList(messages => [...messages, { text: newMessage, author: HUMAN }])
   }
 
   const changeHandle = (e) => {
@@ -19,7 +21,7 @@ function App() {
     if (messageList.length > 0) {
       if (messageList[messageList.length - 1].author === 'human') {
         const timer = setTimeout(() => {
-          setMessageList((messages) => [...messages, { text: 'hi, im a bot', author: 'bot' }])
+          setMessageList((messages) => [...messages, { text: 'hi, im a bot', author: BOT }])
         }
           , 1000);
         return () => clearTimeout(timer);
@@ -30,8 +32,11 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={addMessageHandle}>Add message</button>
-      <input value={newMessage} onChange={changeHandle}></input>
+      <form onSubmit={addMessageHandle}>
+        <button type="submit">Add message</button>
+        <input value={newMessage} onChange={changeHandle}></input>
+      </form>
+
       <div className="mainwrp">
         {messageList.map((message, i) => <Message key={i} messageObj={message} />)}
       </div>
