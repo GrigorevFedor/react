@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, Avatar, IconButton, Typography } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
+import { Card, CardContent, CardHeader, IconButton, Typography } from '@material-ui/core';
+// import { green } from '@material-ui/core/colors';
+// import { makeStyles } from '@material-ui/core/styles';
 // import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const message = (props) => {
