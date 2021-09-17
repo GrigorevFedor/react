@@ -4,7 +4,7 @@ import { useParams, useHistory, Link } from "react-router-dom";
 
 import Message from './message'
 import { Nav } from './nav'
-import { Profile } from './profile';
+
 
 function Chats(props) {
   const [messageList, setMessageList] = useState({});
