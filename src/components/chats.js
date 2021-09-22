@@ -1,80 +1,83 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { List, ListItem, ListItemText, Grid, Button, TextField } from '@material-ui/core';
-import { useParams, useHistory, Link } from "react-router-dom";
+import { Grid, Button, TextField } from '@material-ui/core';
+import { useParams, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux'
 
+import { ChatList } from './chatList'
 import Message from './message'
 import { Nav } from './nav'
-
+import { AUTHORS } from '../utils/constants'
+import { deleteChat } from "../store/chats/actions";
+import { addMessage } from "../store/messages/actions";
 
 function Chats(props) {
-  const [messageList, setMessageList] = useState({});
+  const dispatch = useDispatch();
+
   const [newMessage, setNewMessage] = useState("");
-  const [chats, setChats] = useState([]);
-  const BOT = 'bot';
-  const HUMAN = 'human';
+
+  const messageList = useSelector((state) => state.messages.messages);
+  const chats = useSelector((state) => state.chats.chats);
   const inputRef = useRef(null);
-  let { chatId } = useParams();
+  const { chatId } = useParams();
   const history = useHistory();
+  console.log(chatId)
 
   const sendMessage = useCallback(
-    (message) => {
-      console.log(chatId, message)
-      setMessageList((prevMess) => ({...prevMess,[chatId]: [...prevMess[chatId], message],}));
+    (text, author) => {
+      console.log(text);
+      dispatch(addMessage(chatId, text, author));
     },
     [chatId]
   );
 
-  const addMessageHandle = 
-    (e) => {
-      e.preventDefault();
-      sendMessage({
-        text: newMessage,
-        author: HUMAN,
-        id: `mess-${Date.now()}`,
-      });
-    };
+  const AddMessage = useCallback(
+    (text) => {
+      sendMessage(text, AUTHORS.HUMAN);
+    },
+    [sendMessage]
+  );
+
+  const handleAddMessage = (e)=>{
+    e.preventDefault();
+    AddMessage(newMessage);
+  }
 
   const changeHandle = (e) => {
     setNewMessage(e.target.value);
   }
 
-  const addChat = () => {
-    chatId = `chat-${Date.now()}`;
-    setChats(chats => [...chats, { name: chatId, id: chatId }])
-    setMessageList((messages) => ({...messages, [chatId]: [],}));
-  }
+  const handleDeleteChat = useCallback(
+    (id) => {
+      dispatch(deleteChat(id));
 
-  const deleteHandle = ()=>{
-    console.log("chatid при поиске", chatId)
-    console.log("нашли чат", chats.findIndex(item => item === chatId));
-    console.log("чаты перед удалением", chats); 
-    setChats((prevChats)=>{return prevChats.splice(prevChats.findIndex(item => item === chatId), 1)});
-    // setMessageList((prevMess) => {return delete prevMess[chatId]}); 
-    
-    console.log("чаты после удаления", chats);
-    history.push("/chats/" + chats[0].id);   
-  }
+      if (chatId !== id) {
+        return;
+      }
+
+      if (chats.length === 1) {
+        history.push(`/chats/${chats[0].id}`);
+      } else {
+        history.push(`/chats`);
+      }
+    },
+    [chatId, dispatch, chats, history]
+  );
 
   useEffect(() => {
     inputRef.current.focus();
   }, []);
 
   useEffect(() => {
+    let timeout;
     const curMess = messageList[chatId];
-   
-      if (!!chatId && curMess?.[curMess.length - 1]?.author === HUMAN) {
-        const timer = setTimeout(() => {
-          sendMessage({
-            text: "I am bot",
-            author: BOT,
-            id: `mess-${Date.now()}`,
-          });
-        }
-          , 1000);
-        return () => clearTimeout(timer);
-      }
-    
 
+    if (!!chatId && curMess?.[curMess.length - 1]?.author === AUTHORS.HUMAN) {
+      timeout = setTimeout(() => {
+        sendMessage("I am bot", AUTHORS.BOT);
+      }, 3000);
+    }
+
+    return () => clearTimeout(timeout);
   }, [messageList]);
 
   return (
@@ -82,27 +85,18 @@ function Chats(props) {
       <Nav />
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <Button variant="contained" type="button" onClick={addChat}>Add chat</Button>
-          <List component="nav" aria-label="main mailbox folders">
-            {chats.map((chat) =>
-              <ListItem button key={chat.id} >
-                <Link to={`/chats/${chat.id}`}><ListItemText primary={chat.name} /></Link>
-                <Button variant="contained" type="button" onClick={deleteHandle}>Delete chat</Button>
-              </ListItem>
-            )}
-          </List>
+          <ChatList chats={chats} onDelete={handleDeleteChat} />
         </Grid>
         <Grid item xs={9}>
-          <form onSubmit={addMessageHandle}>
+          <form onSubmit={handleAddMessage}>
             <TextField id="standard-basic" label="Message" value={newMessage} onChange={changeHandle} inputRef={inputRef} />
             <Button variant="contained" type="submit">Add message</Button>
           </form>
           <div className="mainwrp">
             {!!chatId && (messageList[chatId] ? <>
               {messageList[chatId].map((message, i) => <Message key={i} messageObj={message} />)}
-              </> : <p>empty</p>
-              
-            )} 
+            </> : <p>empty</p>
+            )}
           </div>
         </Grid>
       </Grid>
