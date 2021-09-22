@@ -1,31 +1,26 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Grid, Button, TextField } from '@material-ui/core';
-import { useParams, useHistory } from "react-router-dom";
+import { useCallback } from 'react';
+import { Grid } from '@material-ui/core';
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ChatList } from './chatList'
-import Message from './message'
+import { ChatList } from './ChatList/chatList'
+import Message from './Messages/message'
 import { Nav } from './nav'
 import { AUTHORS } from '../utils/constants'
-import { deleteChat } from "../store/chats/actions";
-import { addMessage } from "../store/messages/actions";
+import { addMessageWithReply } from "../store/messages/actions";
+import { Form } from './Form/form'
+import { selectMessages } from '../store/messages/selectors'
+
 
 function Chats(props) {
   const dispatch = useDispatch();
 
-  const [newMessage, setNewMessage] = useState("");
-
-  const messageList = useSelector((state) => state.messages.messages);
-  const chats = useSelector((state) => state.chats.chats);
-  const inputRef = useRef(null);
+  const messageList = useSelector(selectMessages);
   const { chatId } = useParams();
-  const history = useHistory();
-  console.log(chatId)
 
   const sendMessage = useCallback(
     (text, author) => {
-      console.log(text);
-      dispatch(addMessage(chatId, text, author));
+      dispatch(addMessageWithReply(chatId, text, author));
     },
     [chatId]
   );
@@ -37,61 +32,15 @@ function Chats(props) {
     [sendMessage]
   );
 
-  const handleAddMessage = (e)=>{
-    e.preventDefault();
-    AddMessage(newMessage);
-  }
-
-  const changeHandle = (e) => {
-    setNewMessage(e.target.value);
-  }
-
-  const handleDeleteChat = useCallback(
-    (id) => {
-      dispatch(deleteChat(id));
-
-      if (chatId !== id) {
-        return;
-      }
-
-      if (chats.length === 1) {
-        history.push(`/chats/${chats[0].id}`);
-      } else {
-        history.push(`/chats`);
-      }
-    },
-    [chatId, dispatch, chats, history]
-  );
-
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    let timeout;
-    const curMess = messageList[chatId];
-
-    if (!!chatId && curMess?.[curMess.length - 1]?.author === AUTHORS.HUMAN) {
-      timeout = setTimeout(() => {
-        sendMessage("I am bot", AUTHORS.BOT);
-      }, 3000);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [messageList]);
-
   return (
     <div className="App">
       <Nav />
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <ChatList chats={chats} onDelete={handleDeleteChat} />
+          <ChatList />
         </Grid>
         <Grid item xs={9}>
-          <form onSubmit={handleAddMessage}>
-            <TextField id="standard-basic" label="Message" value={newMessage} onChange={changeHandle} inputRef={inputRef} />
-            <Button variant="contained" type="submit">Add message</Button>
-          </form>
+          <Form addMessage={AddMessage} />
           <div className="mainwrp">
             {!!chatId && (messageList[chatId] ? <>
               {messageList[chatId].map((message, i) => <Message key={i} messageObj={message} />)}
@@ -101,7 +50,6 @@ function Chats(props) {
         </Grid>
       </Grid>
     </div>
-
   );
 }
 
