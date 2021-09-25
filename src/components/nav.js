@@ -5,9 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
     root: {
-      width: 500,
+        width: 500,
     },
-  });
+});
 
 
 
@@ -31,9 +31,10 @@ export const Nav = () => {
             showLabels
             className={classes.root}
         >
-            <BottomNavigationAction label="Home" value=""/>
-            <BottomNavigationAction label="Chats" value="chats"/>
-            <BottomNavigationAction label="Profile" value="profile"/>
+            {/* <BottomNavigationAction label="Home" value="" /> */}
+            <BottomNavigationAction label="Chats" value="chats" />
+            <BottomNavigationAction label="Profile" value="profile" />
+            <BottomNavigationAction label="News" value="news" />
         </BottomNavigation>
     </>;
 };

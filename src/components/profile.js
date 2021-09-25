@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { toggleAddInfo } from "../store/profile/actions";
 
-export const Profile = () => {
+export const Profile = ({ onLogout }) => {
 
     const showAddInfo = useSelector((state) => state.showAddInfo);
     const dispatch = useDispatch();
@@ -14,9 +14,14 @@ export const Profile = () => {
         console.log(showAddInfo);
     };
 
+    const handleClick = () => {
+        onLogout();
+    };
+
     return <>
         <Nav />
         <div>This is profile</div>
+        <button onClick={handleClick}>Logout</button>
         <Checkbox
             checked={showAddInfo}
             onChange={handleChange}
