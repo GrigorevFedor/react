@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
-import { addChat } from '../../store/chats/actions'
+import { addChatFb } from '../../store/chats/actions'
 import { ChatListView } from './chatListView'
 import { selectChats } from '../../store/chats/selectors'
 import { deleteChat } from "../../store/chats/actions";
@@ -15,7 +15,7 @@ export const ChatList = () => {
 
     const handleaddChat = () => {
         const chatName = `chat-${Date.now()}`;
-        dispatch(addChat(chatName));
+        dispatch(addChatFb(chatName));
     }
 
     const handleDeleteChat = useCallback(

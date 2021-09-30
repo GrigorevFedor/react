@@ -2,7 +2,9 @@ import { Nav } from './nav'
 import { Checkbox } from '@material-ui/core'
 import { useSelector, useDispatch } from "react-redux";
 
+
 import { toggleAddInfo } from "../store/profile/actions";
+
 
 export const Profile = ({ onLogout }) => {
 
