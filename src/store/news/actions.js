@@ -4,16 +4,16 @@ export const GET_NEWS_PENDING = "NEWS::GET_PENDING";
 export const GET_NEWS_SUCCESS = "NEWS::GET_SUCCESS";
 export const GET_NEWS_FAILURE = "NEWS::GET_FAILURE";
 
-const getNEWSPending = () => ({
+export const getNEWSPending = () => ({
     type: GET_NEWS_PENDING,
 });
 
-const getNEWSSuccess = (articles) => ({
+export const getNEWSSuccess = (articles) => ({
     type: GET_NEWS_SUCCESS,
     payload: articles,
 });
 
-const getNEWSFailure = (error) => ({
+export const getNEWSFailure = (error) => ({
     type: GET_NEWS_FAILURE,
     payload: error,
 });
