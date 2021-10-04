@@ -5,7 +5,7 @@ import {
 } from "./actions";
 import { REQUEST_STATUS } from "../../utils/constants";
 
-const initialState = {
+export const initialState = {
     list: [],
     request: {
         error: null,
@@ -35,8 +35,6 @@ export const newsReducer = (state = initialState, { type, payload }) => {
             };
         }
         case GET_NEWS_FAILURE: {
-            console.log('error payload', payload);
-
             return {
                 ...state,
                 request: {

@@ -17,6 +17,6 @@ export const ChatItem = ({ id, name, onDelete }) => {
     };
 
     return <>
-        <ChatItemView id={id} name={name} onDelete={handleDelete} />
+        <ChatItemView id={id} name={name} onDelete={handleDelete}/>
     </>
 }
