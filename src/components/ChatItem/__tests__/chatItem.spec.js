@@ -1,3 +1,5 @@
+// тут налепил чето но работает
+
 import { render, screen } from '@testing-library/react';
 import { ChatItem } from '../chatItem';
 import * as redux from 'react-redux'
